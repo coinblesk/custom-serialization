@@ -1,4 +1,4 @@
-package ch.uzh.csg.paymentlib.security;
+package ch.uzh.csg.mbps.customserialization.security;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;

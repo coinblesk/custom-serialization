@@ -1,9 +1,9 @@
-package ch.uzh.csg.paymentlib.security;
+package ch.uzh.csg.mbps.customserialization.security;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.uzh.csg.paymentlib.exceptions.UnknownSignatureAlgorithmException;
+import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
 
 /**
  * This class contains the supported signature algorithms and the corresponding
