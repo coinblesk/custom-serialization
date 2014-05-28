@@ -12,6 +12,8 @@ import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.spec.ECParameterSpec;
 
+import ch.uzh.csg.mbps.customserialization.SignatureAlgorithm;
+
 //TODO: javadoc
 public class KeyGenerator {
 	

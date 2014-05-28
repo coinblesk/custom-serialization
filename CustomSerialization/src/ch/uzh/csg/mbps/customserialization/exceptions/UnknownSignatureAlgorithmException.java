@@ -1,6 +1,6 @@
 package ch.uzh.csg.mbps.customserialization.exceptions;
 
-import ch.uzh.csg.mbps.customserialization.security.SignatureAlgorithm;
+import ch.uzh.csg.mbps.customserialization.SignatureAlgorithm;
 
 /**
  * This Exception is thrown when a {@link SignatureAlgorithm} with an unknown code is
