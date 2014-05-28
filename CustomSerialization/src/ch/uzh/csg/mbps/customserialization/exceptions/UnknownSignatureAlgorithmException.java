@@ -14,4 +14,3 @@ public class UnknownSignatureAlgorithmException extends Exception {
 	private static final long serialVersionUID = 2519179640406402742L;
 
 }
-
