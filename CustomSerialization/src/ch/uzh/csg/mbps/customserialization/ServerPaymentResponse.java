@@ -2,8 +2,7 @@ package ch.uzh.csg.mbps.customserialization;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
+import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
 
 //TODO: javadoc
 public class ServerPaymentResponse extends SerializableObject {
@@ -126,7 +125,7 @@ public class ServerPaymentResponse extends SerializableObject {
 	}
 	
 	@Override
-	public ServerPaymentResponse decode(byte[] bytes) throws IllegalArgumentException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException {
+	public ServerPaymentResponse decode(byte[] bytes) throws IllegalArgumentException, SerializationException {
 		if (bytes == null)
 			throw new IllegalArgumentException("The argument can't be null.");
 		

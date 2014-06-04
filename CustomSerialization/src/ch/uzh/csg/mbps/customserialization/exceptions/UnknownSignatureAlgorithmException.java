@@ -9,7 +9,7 @@ import ch.uzh.csg.mbps.customserialization.SignatureAlgorithm;
  * @author Jeton Memeti
  * 
  */
-public class UnknownSignatureAlgorithmException extends Exception {
+public class UnknownSignatureAlgorithmException extends SerializationException {
 	
 	private static final long serialVersionUID = 2519179640406402742L;
 

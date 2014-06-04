@@ -18,8 +18,7 @@ import org.junit.Test;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
+import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
 import ch.uzh.csg.mbps.customserialization.security.KeyGenerator;
 
 public class PaymentResponseTest {
@@ -233,7 +232,7 @@ public class PaymentResponseTest {
 	}
 	
 	@Test
-	public void testDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException, NoSuchProviderException, InvalidAlgorithmParameterException {
+	public void testDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
 		KeyPair keyPair = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
 		long timestamp = System.currentTimeMillis();
 		

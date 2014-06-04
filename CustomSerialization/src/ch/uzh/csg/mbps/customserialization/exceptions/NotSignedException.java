@@ -9,7 +9,7 @@ import ch.uzh.csg.mbps.customserialization.SignedSerializableObject;
  * @author Jeton Memeti
  * 
  */
-public class NotSignedException extends Exception {
+public class NotSignedException extends SerializationException {
 
 	private static final long serialVersionUID = 8214149865215084985L;
 

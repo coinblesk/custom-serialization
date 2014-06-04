@@ -9,7 +9,7 @@ import ch.uzh.csg.mbps.customserialization.Currency;
  * @author Jeton Memeti
  * 
  */
-public class UnknownCurrencyException extends Exception {
+public class UnknownCurrencyException extends SerializationException {
 	
 	private static final long serialVersionUID = -7110301898988281908L;
 	

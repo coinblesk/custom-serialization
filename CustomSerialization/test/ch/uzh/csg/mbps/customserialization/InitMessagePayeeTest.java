@@ -9,9 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
-import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
+import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
 
 
 public class InitMessagePayeeTest {
@@ -57,7 +55,7 @@ public class InitMessagePayeeTest {
 	}
 	
 	@Test
-	public void testEncodeDecode() throws IllegalArgumentException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException {
+	public void testEncodeDecode() throws IllegalArgumentException, SerializationException {
 		InitMessagePayee initMessagePayee = new InitMessagePayee("payee", Currency.BTC, 1);
 		byte[] encode = initMessagePayee.encode();
 		InitMessagePayee decode = DecoderFactory.decode(InitMessagePayee.class, encode);

@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
+import ch.uzh.csg.mbps.customserialization.exceptions.UnknownServerResponseStatusException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
 
 //TODO: javadoc
@@ -181,7 +182,7 @@ public class PaymentResponse extends SignedSerializableObject {
 	}
 
 	@Override
-	public PaymentResponse decode(byte[] bytes) throws IllegalArgumentException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException {
+	public PaymentResponse decode(byte[] bytes) throws IllegalArgumentException, UnknownSignatureAlgorithmException, UnknownServerResponseStatusException, UnknownCurrencyException, NotSignedException {
 		if (bytes == null)
 			throw new IllegalArgumentException("The argument can't be null.");
 		

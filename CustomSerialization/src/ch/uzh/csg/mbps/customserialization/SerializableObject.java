@@ -2,8 +2,7 @@ package ch.uzh.csg.mbps.customserialization;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
+import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
 
 //TODO: javadoc
 public abstract class SerializableObject {
@@ -39,20 +38,11 @@ public abstract class SerializableObject {
 	/**
 	 * Deserializes a SerializableObject based on the given bytes.
 	 * 
-	 * @param bytes
-	 *            the raw data
-	 * @throws IllegalArgumentException
-	 *             if bytes is null or does not contain enough information to
+	 * @param bytes the raw data
+	 * @throws IllegalArgumentException if bytes is null or does not contain enough information to
 	 *             deserialize
-	 * @throws NotSignedException
-	 *             if a {@link SignedSerializableObject} is being deserialized
-	 *             but there is no signature attached
-	 * @throws UnknownSignatureAlgorithmException
-	 *             if the {@link SignatureAlgorithm} given in the bytes is not
-	 *             known
-	 * @throws UnknownCurrencyException
-	 *             if the {@link Currency} given in the bytes is not known
+	 * @throws SerializationException any subclass of {@link SerializationException}
 	 */
-	public abstract SerializableObject decode(byte[] bytes) throws IllegalArgumentException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException;
+	public abstract SerializableObject decode(byte[] bytes) throws IllegalArgumentException, SerializationException;
 	
 }
