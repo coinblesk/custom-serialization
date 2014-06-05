@@ -48,7 +48,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 0, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 0, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -56,7 +56,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 256, "buyer", "seller", Currency.BTC, 1, 1);
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 256, "buyer", "seller", Currency.BTC, 1, 1);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -64,7 +64,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, null, "seller", Currency.BTC, 12, System.currentTimeMillis());
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 1, null, "seller", Currency.BTC, 12, System.currentTimeMillis());
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -72,7 +72,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "", Currency.BTC, 12, System.currentTimeMillis());
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "", Currency.BTC, 12, System.currentTimeMillis());
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -80,7 +80,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", null, 12, System.currentTimeMillis());
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", null, 12, System.currentTimeMillis());
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -88,7 +88,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 0, System.currentTimeMillis());
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 0, System.currentTimeMillis());
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -96,7 +96,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 1, 0);
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 1, 0);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -104,7 +104,7 @@ public class PaymentRequestTest {
 		exceptionThrown = false;
 		
 		try {
-			new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "BuyeR", Currency.BTC, 12, System.currentTimeMillis());
+			new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "BuyeR", Currency.BTC, 12, System.currentTimeMillis());
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
 		}
@@ -115,7 +115,7 @@ public class PaymentRequestTest {
 	@Test
 	public void testEncode_fail() throws IllegalArgumentException {
 		//this will fail because the PaymentRequest is not signed
-		PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
+		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
 		boolean exceptionThrown = false;
 		
 		try {
@@ -128,11 +128,11 @@ public class PaymentRequestTest {
 	}
 	
 	@Test
-	public void testSignEncode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, NoSuchProviderException, InvalidAlgorithmParameterException {
-		KeyPair keyPair = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+	public void testSignEncode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, NoSuchProviderException, InvalidAlgorithmParameterException, UnknownPKIAlgorithmException {
+		KeyPair keyPair = KeyHandler.generateKeyPair();
 		long timestamp = System.currentTimeMillis();
 		
-		PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 		pr.sign(keyPair.getPrivate());
 		
 		byte[] encode = pr.encode();
@@ -178,10 +178,10 @@ public class PaymentRequestTest {
 	
 	@Test
 	public void testDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
-		KeyPair keyPair = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPair = KeyHandler.generateKeyPair();
 		long timestamp = System.currentTimeMillis();
 		
-		PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 		pr.sign(keyPair.getPrivate());
 		
 		byte[] encode = pr.encode();

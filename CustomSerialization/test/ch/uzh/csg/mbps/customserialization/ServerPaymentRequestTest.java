@@ -33,7 +33,7 @@ public class ServerPaymentRequestTest {
 	}
 
 	@Test
-	public void testConstructor_IllegalArgumentException() throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException {
+	public void testConstructor_IllegalArgumentException() throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, UnknownPKIAlgorithmException {
 		boolean exceptionThrown = false;
 		try {
 			//this will fail because of the null argument
@@ -47,7 +47,7 @@ public class ServerPaymentRequestTest {
 		exceptionThrown = false;
 		try {
 			//this will fail because the PaymentRequest is not signed
-			PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
+			PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
 			new ServerPaymentRequest(pr);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
@@ -58,7 +58,7 @@ public class ServerPaymentRequestTest {
 		exceptionThrown = false;
 		try {
 			//this will fail because of the null argument
-			PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
+			PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, System.currentTimeMillis());
 			new ServerPaymentRequest(pr, null);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
@@ -70,9 +70,9 @@ public class ServerPaymentRequestTest {
 		try {
 			//this will fail because the payee's PaymentRequest is not signed
 			long timestamp = System.currentTimeMillis();
-			PaymentRequest prPayer = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
-			prPayer.sign(KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
-			PaymentRequest prPayee = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+			PaymentRequest prPayer = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+			prPayer.sign(KeyHandler.generateKeyPair().getPrivate());
+			PaymentRequest prPayee = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 			new ServerPaymentRequest(prPayer, prPayee);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
@@ -84,10 +84,10 @@ public class ServerPaymentRequestTest {
 		try {
 			//this will fail because the PaymentRequests are not equals
 			long timestamp = System.currentTimeMillis();
-			PaymentRequest prPayer = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
-			prPayer.sign(KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
-			PaymentRequest prPayee = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "seller", "buyer", Currency.BTC, 12, timestamp);
-			prPayee.sign(KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
+			PaymentRequest prPayer = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+			prPayer.sign(KeyHandler.generateKeyPair().getPrivate());
+			PaymentRequest prPayee = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "seller", "buyer", Currency.BTC, 12, timestamp);
+			prPayee.sign(KeyHandler.generateKeyPair().getPrivate());
 			new ServerPaymentRequest(prPayer, prPayee);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
@@ -100,12 +100,12 @@ public class ServerPaymentRequestTest {
 	public void testEncodeDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
 		long timestamp = System.currentTimeMillis();
 		
-		KeyPair keyPairPayer = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
-		KeyPair keyPairPayee = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPairPayer = KeyHandler.generateKeyPair();
+		KeyPair keyPairPayee = KeyHandler.generateKeyPair();
 		
-		PaymentRequest prPayer = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+		PaymentRequest prPayer = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 		prPayer.sign(keyPairPayer.getPrivate());
-		PaymentRequest prPayee = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+		PaymentRequest prPayee = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 		prPayee.sign(keyPairPayee.getPrivate());
 		ServerPaymentRequest spr = new ServerPaymentRequest(prPayer, prPayee);
 		

@@ -33,13 +33,13 @@ public class ServerPaymentResponseTest {
 	}
 
 	@Test
-	public void testConstructor_IllegalArgumentException() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException {
+	public void testConstructor_IllegalArgumentException() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, UnknownPKIAlgorithmException {
 		boolean exceptionThrown = false;
 		long timestamp = System.currentTimeMillis();
 		
-		KeyPair keyPairPayee = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
-		PaymentResponse prPayer = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
-		PaymentResponse prPayee = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
+		KeyPair keyPairPayee = KeyHandler.generateKeyPair();
+		PaymentResponse prPayer = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
+		PaymentResponse prPayee = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		
 		try {
 			new ServerPaymentRequest(null);
@@ -79,10 +79,10 @@ public class ServerPaymentResponseTest {
 	@Test
 	public void testEncodeDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
 		long timestamp = System.currentTimeMillis();
-		KeyPair keyPairPayee = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
-		KeyPair keyPairPayer = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
-		PaymentResponse prPayer = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
-		PaymentResponse prPayee = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
+		KeyPair keyPairPayee = KeyHandler.generateKeyPair();
+		KeyPair keyPairPayer = KeyHandler.generateKeyPair();
+		PaymentResponse prPayer = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
+		PaymentResponse prPayee = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		
 		prPayer.sign(keyPairPayer.getPrivate());
 		prPayee.sign(keyPairPayee.getPrivate());

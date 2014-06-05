@@ -13,7 +13,7 @@ import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 //TODO: javadoc
 public abstract class SignedSerializableObject extends SerializableObject {
 	
-	private SignatureAlgorithm signatureAlgorithm;
+	private PKIAlgorithm pkiAlgorithm;
 	private int keyNumber;
 	
 	/*
@@ -27,21 +27,21 @@ public abstract class SignedSerializableObject extends SerializableObject {
 	protected SignedSerializableObject() {
 	}
 
-	public SignedSerializableObject(int version, SignatureAlgorithm signatureAlgorithm, int keyNumber) throws IllegalArgumentException {
+	public SignedSerializableObject(int version, PKIAlgorithm pkiAlgorithm, int keyNumber) throws IllegalArgumentException {
 		super(version);
 		
-		if (signatureAlgorithm == null)
+		if (pkiAlgorithm == null)
 			throw new IllegalArgumentException("The signature algorithm cannot be null.");
 		
 		if (keyNumber <= 0 || keyNumber > 255)
 			throw new IllegalArgumentException("The key number must be between 1 and 255.");
 		
-		this.signatureAlgorithm = signatureAlgorithm;
+		this.pkiAlgorithm = pkiAlgorithm;
 		this.keyNumber = keyNumber;
 	}
 	
-	public SignatureAlgorithm getSignatureAlgorithm() {
-		return signatureAlgorithm;
+	public PKIAlgorithm getPKIAlgorithm() {
+		return pkiAlgorithm;
 	}
 	
 	public int getKeyNumber() {
@@ -57,7 +57,7 @@ public abstract class SignedSerializableObject extends SerializableObject {
 	}
 	
 	public void sign(PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-		Signature sig = Signature.getInstance(signatureAlgorithm.getSignatureAlgorithm());
+		Signature sig = Signature.getInstance(pkiAlgorithm.getSignatureAlgorithm());
 		sig.initSign(privateKey);
 		sig.update(payload);
 		signature = sig.sign();
@@ -67,7 +67,7 @@ public abstract class SignedSerializableObject extends SerializableObject {
 		if (signature == null)
 			throw new NotSignedException();
 		
-		Signature sig = Signature.getInstance(signatureAlgorithm.getSignatureAlgorithm());
+		Signature sig = Signature.getInstance(pkiAlgorithm.getSignatureAlgorithm());
 		sig.initVerify(publicKey);
 		sig.update(payload);
 		return sig.verify(signature);

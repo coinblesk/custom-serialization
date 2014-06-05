@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
 
 public class InitMessagePayee extends SerializableObject {
 	
@@ -81,7 +80,7 @@ public class InitMessagePayee extends SerializableObject {
 	}
 
 	@Override
-	public InitMessagePayee decode(byte[] bytes) throws IllegalArgumentException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException {
+	public InitMessagePayee decode(byte[] bytes) throws IllegalArgumentException, NotSignedException, UnknownCurrencyException {
 		try {
 			int index = 0;
 			

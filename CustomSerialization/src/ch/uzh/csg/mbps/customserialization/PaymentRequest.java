@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
 
 //TODO: javadoc
 public class PaymentRequest extends SignedSerializableObject {
@@ -21,12 +20,12 @@ public class PaymentRequest extends SignedSerializableObject {
 	protected PaymentRequest() {
 	}
 
-	public PaymentRequest(SignatureAlgorithm signatureAlgorithm, int keyNumber, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
-		this(1, signatureAlgorithm, keyNumber, usernamePayer, usernamePayee, currency, amount, timestamp);
+	public PaymentRequest(PKIAlgorithm pkiAlgorithm, int keyNumber, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
+		this(1, pkiAlgorithm, keyNumber, usernamePayer, usernamePayee, currency, amount, timestamp);
 	}
 	
-	private PaymentRequest(int version, SignatureAlgorithm signatureAlgorithm, int keyNumber, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
-		super(version, signatureAlgorithm, keyNumber);
+	private PaymentRequest(int version, PKIAlgorithm pkiAlgorithm, int keyNumber, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
+		super(version, pkiAlgorithm, keyNumber);
 		
 		checkParameters(usernamePayer, usernamePayee, currency, amount, timestamp);
 		
@@ -83,7 +82,7 @@ public class PaymentRequest extends SignedSerializableObject {
 		int index = 0;
 		
 		payload[index++] = (byte) getVersion();
-		payload[index++] = getSignatureAlgorithm().getCode();
+		payload[index++] = getPKIAlgorithm().getCode();
 		payload[index++] = (byte) getKeyNumber();
 		payload[index++] = (byte) usernamePayerBytes.length;
 		for (byte b : usernamePayerBytes) {
@@ -125,7 +124,7 @@ public class PaymentRequest extends SignedSerializableObject {
 	}
 
 	@Override
-	public PaymentRequest decode(byte[] bytes) throws IllegalArgumentException, NotSignedException, UnknownSignatureAlgorithmException, UnknownCurrencyException {
+	public PaymentRequest decode(byte[] bytes) throws IllegalArgumentException, UnknownPKIAlgorithmException, UnknownCurrencyException, NotSignedException {
 		if (bytes == null)
 			throw new IllegalArgumentException("The argument can't be null.");
 		
@@ -133,7 +132,7 @@ public class PaymentRequest extends SignedSerializableObject {
 			int index = 0;
 			
 			int version = bytes[index++] & 0xFF;
-			SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.getSignatureAlgorithm(bytes[index++]);
+			PKIAlgorithm pkiAlgorithm = PKIAlgorithm.getPKIAlgorithm(bytes[index++]);
 			int keyNumber = bytes[index++] & 0xFF;
 			
 			int usernamePayerLength = bytes[index++] & 0xFF;
@@ -164,7 +163,7 @@ public class PaymentRequest extends SignedSerializableObject {
 			}
 			long timestamp = PrimitiveTypeSerializer.getBytesAsLong(timestampBytes);
 			
-			PaymentRequest pr = new PaymentRequest(version, signatureAlgorithm, keyNumber, usernamePayer, usernamePayee, currency, amount, timestamp);
+			PaymentRequest pr = new PaymentRequest(version, pkiAlgorithm, keyNumber, usernamePayer, usernamePayee, currency, amount, timestamp);
 			
 			int signatureLength = bytes.length - index;
 			if (signatureLength == 0) {
@@ -216,7 +215,7 @@ public class PaymentRequest extends SignedSerializableObject {
 		PaymentRequest pr = (PaymentRequest) o;
 		if (getVersion() != pr.getVersion())
 			return false;
-		if (getSignatureAlgorithm().getCode() != pr.getSignatureAlgorithm().getCode())
+		if (getPKIAlgorithm().getCode() != pr.getPKIAlgorithm().getCode())
 			return false;
 		if (getKeyNumber() != pr.getKeyNumber())
 			return false;

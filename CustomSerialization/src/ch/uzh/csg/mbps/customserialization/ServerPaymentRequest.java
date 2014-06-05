@@ -134,7 +134,7 @@ public class ServerPaymentRequest extends SerializableObject {
 		}
 		if (nofSignatures > 1) {
 			result[index++] = (byte) paymentRequestPayee.getVersion();
-			result[index++] = paymentRequestPayee.getSignatureAlgorithm().getCode();
+			result[index++] = paymentRequestPayee.getPKIAlgorithm().getCode();
 			result[index++] = (byte) paymentRequestPayee.getKeyNumber();
 			for (byte b : paymentRequestPayee.getSignature()) {
 				result[index++] = b;

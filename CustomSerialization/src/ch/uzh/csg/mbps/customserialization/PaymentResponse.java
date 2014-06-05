@@ -6,7 +6,6 @@ import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownServerResponseStatusException;
-import ch.uzh.csg.mbps.customserialization.exceptions.UnknownSignatureAlgorithmException;
 
 //TODO: javadoc
 public class PaymentResponse extends SignedSerializableObject {
@@ -25,12 +24,12 @@ public class PaymentResponse extends SignedSerializableObject {
 	protected PaymentResponse() {
 	}
 	
-	public PaymentResponse(SignatureAlgorithm signatureAlgorithm, int keyNumber, ServerResponseStatus status, String reason, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
-		this(1, signatureAlgorithm, keyNumber, status, reason, usernamePayer, usernamePayee, currency, amount, timestamp);
+	public PaymentResponse(PKIAlgorithm pkiAlgorithm, int keyNumber, ServerResponseStatus status, String reason, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
+		this(1, pkiAlgorithm, keyNumber, status, reason, usernamePayer, usernamePayee, currency, amount, timestamp);
 	}
 	
-	private PaymentResponse(int version, SignatureAlgorithm signatureAlgorithm, int keyNumber, ServerResponseStatus status, String reason, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
-		super(version, signatureAlgorithm, keyNumber);
+	private PaymentResponse(int version, PKIAlgorithm pkiAlgorithm, int keyNumber, ServerResponseStatus status, String reason, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
+		super(version, pkiAlgorithm, keyNumber);
 		
 		checkParameters(status, reason, usernamePayer, usernamePayee, currency, amount, timestamp);
 		
@@ -123,7 +122,7 @@ public class PaymentResponse extends SignedSerializableObject {
 		int index = 0;
 		
 		payload[index++] = (byte) getVersion();
-		payload[index++] = getSignatureAlgorithm().getCode();
+		payload[index++] = getPKIAlgorithm().getCode();
 		payload[index++] = (byte) getKeyNumber();
 		payload[index++] = status.getCode();
 		
@@ -182,7 +181,7 @@ public class PaymentResponse extends SignedSerializableObject {
 	}
 
 	@Override
-	public PaymentResponse decode(byte[] bytes) throws IllegalArgumentException, UnknownSignatureAlgorithmException, UnknownServerResponseStatusException, UnknownCurrencyException, NotSignedException {
+	public PaymentResponse decode(byte[] bytes) throws IllegalArgumentException, UnknownPKIAlgorithmException, UnknownServerResponseStatusException, UnknownCurrencyException, NotSignedException {
 		if (bytes == null)
 			throw new IllegalArgumentException("The argument can't be null.");
 		
@@ -190,7 +189,7 @@ public class PaymentResponse extends SignedSerializableObject {
 			int index = 0;
 			
 			int version = bytes[index++] & 0xFF;
-			SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.getSignatureAlgorithm(bytes[index++]);
+			PKIAlgorithm pkiAlgorithm = PKIAlgorithm.getPKIAlgorithm(bytes[index++]);
 			int keyNumber = bytes[index++] & 0xFF;
 			ServerResponseStatus status = ServerResponseStatus.getStatus(bytes[index++]);
 			
@@ -234,7 +233,7 @@ public class PaymentResponse extends SignedSerializableObject {
 			}
 			long timestamp = PrimitiveTypeSerializer.getBytesAsLong(timestampBytes);
 			
-			PaymentResponse pr = new PaymentResponse(version, signatureAlgorithm, keyNumber, status, reason, usernamePayer, usernamePayee, currency, amount, timestamp);
+			PaymentResponse pr = new PaymentResponse(version, pkiAlgorithm, keyNumber, status, reason, usernamePayer, usernamePayee, currency, amount, timestamp);
 			
 			int signatureLength = bytes.length - index;
 			if (signatureLength == 0) {
@@ -263,7 +262,7 @@ public class PaymentResponse extends SignedSerializableObject {
 		PaymentResponse pr = (PaymentResponse) o;
 		if (getVersion() != pr.getVersion())
 			return false;
-		if (getSignatureAlgorithm().getCode() != pr.getSignatureAlgorithm().getCode())
+		if (getPKIAlgorithm().getCode() != pr.getPKIAlgorithm().getCode())
 			return false;
 		if (getKeyNumber() != pr.getKeyNumber())
 			return false;
