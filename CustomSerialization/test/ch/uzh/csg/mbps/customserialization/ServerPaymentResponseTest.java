@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
-import ch.uzh.csg.mbps.customserialization.security.KeyGenerator;
+import ch.uzh.csg.mbps.customserialization.security.KeyHandler;
 
 public class ServerPaymentResponseTest {
 
@@ -37,7 +37,7 @@ public class ServerPaymentResponseTest {
 		boolean exceptionThrown = false;
 		long timestamp = System.currentTimeMillis();
 		
-		KeyPair keyPairPayee = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPairPayee = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
 		PaymentResponse prPayer = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		PaymentResponse prPayee = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		
@@ -79,8 +79,8 @@ public class ServerPaymentResponseTest {
 	@Test
 	public void testEncodeDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
 		long timestamp = System.currentTimeMillis();
-		KeyPair keyPairPayee = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
-		KeyPair keyPairPayer = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPairPayee = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPairPayer = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
 		PaymentResponse prPayer = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		PaymentResponse prPayee = new PaymentResponse(SignatureAlgorithm.SHA256withECDSA, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		

@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
-import ch.uzh.csg.mbps.customserialization.security.KeyGenerator;
+import ch.uzh.csg.mbps.customserialization.security.KeyHandler;
 
 public class ServerPaymentRequestTest {
 
@@ -71,7 +71,7 @@ public class ServerPaymentRequestTest {
 			//this will fail because the payee's PaymentRequest is not signed
 			long timestamp = System.currentTimeMillis();
 			PaymentRequest prPayer = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
-			prPayer.sign(KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
+			prPayer.sign(KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
 			PaymentRequest prPayee = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 			new ServerPaymentRequest(prPayer, prPayee);
 		} catch (IllegalArgumentException e) {
@@ -85,9 +85,9 @@ public class ServerPaymentRequestTest {
 			//this will fail because the PaymentRequests are not equals
 			long timestamp = System.currentTimeMillis();
 			PaymentRequest prPayer = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
-			prPayer.sign(KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
+			prPayer.sign(KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
 			PaymentRequest prPayee = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "seller", "buyer", Currency.BTC, 12, timestamp);
-			prPayee.sign(KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
+			prPayee.sign(KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA).getPrivate());
 			new ServerPaymentRequest(prPayer, prPayee);
 		} catch (IllegalArgumentException e) {
 			exceptionThrown = true;
@@ -100,8 +100,8 @@ public class ServerPaymentRequestTest {
 	public void testEncodeDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
 		long timestamp = System.currentTimeMillis();
 		
-		KeyPair keyPairPayer = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
-		KeyPair keyPairPayee = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPairPayer = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPairPayee = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
 		
 		PaymentRequest prPayer = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
 		prPayer.sign(keyPairPayer.getPrivate());

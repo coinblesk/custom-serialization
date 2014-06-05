@@ -19,7 +19,7 @@ import org.junit.Test;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
-import ch.uzh.csg.mbps.customserialization.security.KeyGenerator;
+import ch.uzh.csg.mbps.customserialization.security.KeyHandler;
 
 public class PaymentRequestTest {
 
@@ -129,7 +129,7 @@ public class PaymentRequestTest {
 	
 	@Test
 	public void testSignEncode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, NoSuchProviderException, InvalidAlgorithmParameterException {
-		KeyPair keyPair = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPair = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
@@ -178,7 +178,7 @@ public class PaymentRequestTest {
 	
 	@Test
 	public void testDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
-		KeyPair keyPair = KeyGenerator.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
+		KeyPair keyPair = KeyHandler.generateECCKeyPair(SignatureAlgorithm.SHA256withECDSA);
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentRequest pr = new PaymentRequest(SignatureAlgorithm.SHA256withECDSA, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
