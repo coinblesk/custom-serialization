@@ -24,6 +24,8 @@ import ch.uzh.csg.mbps.customserialization.SignatureAlgorithm;
 //TODO: javadoc
 public class KeyHandler {
 	
+	//TODO: add test! for base 64 crap
+	
 	static {
 		Security.addProvider(new BouncyCastleProvider());
 	}
