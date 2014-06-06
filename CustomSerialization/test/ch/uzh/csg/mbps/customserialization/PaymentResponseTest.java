@@ -19,7 +19,7 @@ import org.junit.Test;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
-import ch.uzh.csg.mbps.customserialization.security.KeyHandler;
+import ch.uzh.csg.mbps.customserialization.testutils.TestUtils;
 
 public class PaymentResponseTest {
 
@@ -129,7 +129,7 @@ public class PaymentResponseTest {
 	
 	@Test
 	public void testSignEncode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, NoSuchProviderException, InvalidAlgorithmParameterException, UnknownPKIAlgorithmException {
-		KeyPair keyPair = KeyHandler.generateKeyPair();
+		KeyPair keyPair = TestUtils.generateKeyPair();
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentResponse pr = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
@@ -177,7 +177,7 @@ public class PaymentResponseTest {
 	
 	@Test
 	public void testSignEncode_withErrorMessage() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, NoSuchProviderException, InvalidAlgorithmParameterException, UnknownPKIAlgorithmException {
-		KeyPair keyPair = KeyHandler.generateKeyPair();
+		KeyPair keyPair = TestUtils.generateKeyPair();
 		String errMsg = "some error message";
 		long timestamp = System.currentTimeMillis();
 		
@@ -233,7 +233,7 @@ public class PaymentResponseTest {
 	
 	@Test
 	public void testDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
-		KeyPair keyPair = KeyHandler.generateKeyPair();
+		KeyPair keyPair = TestUtils.generateKeyPair();
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentResponse pr = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);

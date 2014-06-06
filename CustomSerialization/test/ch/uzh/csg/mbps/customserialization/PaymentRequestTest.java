@@ -19,7 +19,7 @@ import org.junit.Test;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
-import ch.uzh.csg.mbps.customserialization.security.KeyHandler;
+import ch.uzh.csg.mbps.customserialization.testutils.TestUtils;
 
 public class PaymentRequestTest {
 
@@ -129,7 +129,7 @@ public class PaymentRequestTest {
 	
 	@Test
 	public void testSignEncode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NotSignedException, NoSuchProviderException, InvalidAlgorithmParameterException, UnknownPKIAlgorithmException {
-		KeyPair keyPair = KeyHandler.generateKeyPair();
+		KeyPair keyPair = TestUtils.generateKeyPair();
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
@@ -178,7 +178,7 @@ public class PaymentRequestTest {
 	
 	@Test
 	public void testDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
-		KeyPair keyPair = KeyHandler.generateKeyPair();
+		KeyPair keyPair = TestUtils.generateKeyPair();
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);

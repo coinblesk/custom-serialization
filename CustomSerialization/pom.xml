@@ -4,7 +4,7 @@
 	
 	<groupId>ch.uzh.csg</groupId>
 	<artifactId>custom-serialization</artifactId>
-	<version>0.0.2</version>
+	<version>0.1.0</version>
 	<name>MBPS Custom Serialization</name>
 	<description>This library handles the custom serialization in MBPS as well as elliptic curve cryptographie.</description>
 	
@@ -14,18 +14,6 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.8</version>
-		</dependency>
-		
-	    <!-- Spongy Castle (Bouncy Castle) -->
-		<dependency>
-			<groupId>com.madgag.spongycastle</groupId>
-			<artifactId>core</artifactId>
-			<version>1.50.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.madgag.spongycastle</groupId>
-			<artifactId>prov</artifactId>
-			<version>1.50.0.0</version>
 		</dependency>
 	</dependencies>
 	

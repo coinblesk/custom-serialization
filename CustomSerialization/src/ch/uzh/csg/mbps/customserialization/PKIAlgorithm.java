@@ -11,18 +11,16 @@ import java.util.Map;
  * 
  */
 public enum PKIAlgorithm {
-	DEFAULT((byte) 0x01, "ECDSA", "SC", "brainpoolp256r1", "SHA256withECDSA");
+	DEFAULT((byte) 0x01, "ECDSA", "brainpoolp256r1", "SHA256withECDSA");
 	
 	private byte code;
 	private String keyPairAlgorithm;
-	private String securityProvider;
 	private String keyPairSpecification;
 	private String signaturAlgorithm;
 	
-	private PKIAlgorithm(byte code, String keyPairAlgorithm, String securityProvider, String keyPairSpecification, String signatureAlgorithm) {
+	private PKIAlgorithm(byte code, String keyPairAlgorithm, String keyPairSpecification, String signatureAlgorithm) {
 		this.code = code;
 		this.keyPairAlgorithm = keyPairAlgorithm;
-		this.securityProvider = securityProvider;
 		this.keyPairSpecification = keyPairSpecification;
 		this.signaturAlgorithm = signatureAlgorithm;
 	}
@@ -39,15 +37,6 @@ public enum PKIAlgorithm {
 	 */
 	public String getKeyPairAlgorithm() {
 		return keyPairAlgorithm;
-	}
-
-	/**
-	 * Returns the security provider to be used to generate the asymmetric keys.
-	 * If no security provider is provided, the default java security provider
-	 * is used.
-	 */
-	public String getSecurityProvider() {
-		return securityProvider;
 	}
 
 	/**

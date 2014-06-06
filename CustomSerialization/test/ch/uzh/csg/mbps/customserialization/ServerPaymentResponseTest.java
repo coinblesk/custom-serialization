@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
-import ch.uzh.csg.mbps.customserialization.security.KeyHandler;
+import ch.uzh.csg.mbps.customserialization.testutils.TestUtils;
 
 public class ServerPaymentResponseTest {
 
@@ -37,7 +37,7 @@ public class ServerPaymentResponseTest {
 		boolean exceptionThrown = false;
 		long timestamp = System.currentTimeMillis();
 		
-		KeyPair keyPairPayee = KeyHandler.generateKeyPair();
+		KeyPair keyPairPayee = TestUtils.generateKeyPair();
 		PaymentResponse prPayer = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		PaymentResponse prPayee = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		
@@ -79,8 +79,8 @@ public class ServerPaymentResponseTest {
 	@Test
 	public void testEncodeDecode() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
 		long timestamp = System.currentTimeMillis();
-		KeyPair keyPairPayee = KeyHandler.generateKeyPair();
-		KeyPair keyPairPayer = KeyHandler.generateKeyPair();
+		KeyPair keyPairPayee = TestUtils.generateKeyPair();
+		KeyPair keyPairPayer = TestUtils.generateKeyPair();
 		PaymentResponse prPayer = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		PaymentResponse prPayee = new PaymentResponse(PKIAlgorithm.DEFAULT, 1, ServerResponseStatus.SUCCESS, null, "buyer", "seller", Currency.BTC, 12, timestamp);
 		
