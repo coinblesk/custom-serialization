@@ -12,19 +12,30 @@ import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
  * 
  */
 public enum Currency {
-	BTC((byte) 0x01);
+	BTC((byte) 0x01, "BTC"),
+	CHF((byte) 0x02, "CHF");
 	
 	private byte code;
+	private String currencyCode;
 	
-	private Currency(byte code) {
+	private Currency(byte code, String currencyCode) {
 		this.code = code;
+		this.currencyCode = currencyCode;
 	}
 
 	/**
-	 * Returns the code of this Currency.
+	 * Returns the code/identifier of this Currency.
 	 */
 	public byte getCode() {
 		return code;
+	}
+	
+	/**
+	 * Returns the currency code, which is a three letter abbreviation of the
+	 * currency (e.g. "CHF", "BTC").
+	 */
+	public String getCurrencyCode() {
+		return currencyCode;
 	}
 	
 	private static Map<Byte, Currency> codeCurrencyMap = null;

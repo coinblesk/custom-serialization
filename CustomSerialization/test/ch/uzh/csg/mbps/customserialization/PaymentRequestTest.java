@@ -161,6 +161,8 @@ public class PaymentRequestTest {
 			assertEquals(b, encode[index++]); //username payee
 		}
 		
+		assertEquals(1, encode[index++]); //nofCurrencies
+		
 		assertEquals(1, encode[index++]); //currency
 		
 		byte[] longAsBytes = PrimitiveTypeSerializer.getLongAsBytes(12);
@@ -182,6 +184,23 @@ public class PaymentRequestTest {
 		long timestamp = System.currentTimeMillis();
 		
 		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+		pr.sign(keyPair.getPrivate());
+		
+		byte[] encode = pr.encode();
+		
+		PaymentRequest decoded = DecoderFactory.decode(PaymentRequest.class, encode);
+		boolean verify = decoded.verify(keyPair.getPublic());
+		
+		assertTrue(verify);
+		assertTrue(pr.equals(decoded));
+	}
+	
+	@Test
+	public void testEncodeDecode_withInputCurrency() throws Exception {
+		KeyPair keyPair = TestUtils.generateKeyPair();
+		long timestamp = System.currentTimeMillis();
+		
+		PaymentRequest pr = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, Currency.CHF, 540, timestamp);
 		pr.sign(keyPair.getPrivate());
 		
 		byte[] encode = pr.encode();

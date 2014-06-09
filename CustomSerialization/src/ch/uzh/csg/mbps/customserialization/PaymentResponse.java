@@ -89,8 +89,6 @@ public class PaymentResponse extends SignedSerializableObject {
 			 * + signatureAlgorithm.getCode()
 			 * + keyNumber
 			 * + status
-			 * + reason.length
-			 * + reason
 			 * + usernamePayer.length
 			 * + usernamePayer
 			 * + currency.getCode()
