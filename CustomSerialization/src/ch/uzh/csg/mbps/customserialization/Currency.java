@@ -49,8 +49,12 @@ public enum Currency {
 	 *             if the given code is not known
 	 */
 	public static Currency getCurrency(byte b) throws UnknownCurrencyException {
-		if (codeCurrencyMap == null)
-			initMap();
+		if (codeCurrencyMap == null) {
+			codeCurrencyMap = new HashMap<Byte, Currency>();
+			for (Currency c : values()) {
+				codeCurrencyMap.put(c.getCode(), c);
+			}
+		}
 		
 		Currency currency = codeCurrencyMap.get(b);
 		if (currency == null)
@@ -59,11 +63,29 @@ public enum Currency {
 			return currency;
 	}
 
-	private static void initMap() {
-		codeCurrencyMap = new HashMap<Byte, Currency>();
-		for (Currency c : values()) {
-			codeCurrencyMap.put(c.getCode(), c);
-		}
-	}
+	private static Map<String, Currency> abbrevCurrencyMap = null;
 	
+	/**
+	 * Returns the Currency based on the abbreviation.
+	 * 
+	 * @param b
+	 *            the currency code or abbreviation
+	 * @throws UnknownCurrencyException
+	 *             if the given abbreviation is not known
+	 */
+	public static Currency getCurrency(String abbreviation) throws UnknownCurrencyException {
+		if (abbrevCurrencyMap == null) {
+			abbrevCurrencyMap = new HashMap<String, Currency>();
+			for (Currency c : values()) {
+				abbrevCurrencyMap.put(c.getCurrencyCode(), c);
+			}
+		}
+		
+		Currency currency = abbrevCurrencyMap.get(abbreviation);
+		if (currency == null)
+			throw new UnknownCurrencyException();
+		else
+			return currency;
+	}
+
 }
