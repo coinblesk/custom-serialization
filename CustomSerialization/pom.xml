@@ -4,7 +4,7 @@
 	
 	<groupId>ch.uzh.csg</groupId>
 	<artifactId>custom-serialization</artifactId>
-	<version>0.1.2</version>
+	<version>0.1.3</version>
 	<name>MBPS Custom Serialization</name>
 	<description>This library handles the custom serialization in MBPS as well as elliptic curve cryptographie.</description>
 	

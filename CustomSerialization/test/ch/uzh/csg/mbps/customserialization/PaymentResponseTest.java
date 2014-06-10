@@ -19,6 +19,7 @@ import org.junit.Test;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
+import ch.uzh.csg.mbps.customserialization.exceptions.UnknownPKIAlgorithmException;
 import ch.uzh.csg.mbps.customserialization.testutils.TestUtils;
 
 public class PaymentResponseTest {

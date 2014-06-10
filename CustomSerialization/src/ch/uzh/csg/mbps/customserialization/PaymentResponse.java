@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
+import ch.uzh.csg.mbps.customserialization.exceptions.UnknownPKIAlgorithmException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownServerResponseStatusException;
 
 //TODO: javadoc

@@ -3,6 +3,8 @@ package ch.uzh.csg.mbps.customserialization;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.uzh.csg.mbps.customserialization.exceptions.UnknownPKIAlgorithmException;
+
 /**
  * This class contains the supported algorithms to create asymmetric keys and
  * their corresponding signature algorithms.

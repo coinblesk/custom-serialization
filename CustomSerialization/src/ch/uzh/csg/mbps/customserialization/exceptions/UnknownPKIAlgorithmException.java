@@ -1,6 +1,6 @@
-package ch.uzh.csg.mbps.customserialization;
+package ch.uzh.csg.mbps.customserialization.exceptions;
 
-import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
+import ch.uzh.csg.mbps.customserialization.PKIAlgorithm;
 
 /**
  * This Exception is thrown when a {@link PKIAlgorithm} with an unknown code is
