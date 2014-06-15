@@ -8,7 +8,15 @@ import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownPKIAlgorithmException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownServerResponseStatusException;
 
-//TODO: javadoc
+/**
+ * This class represents a payment response, which is transferred via NFC
+ * between two clients. The byte array serialization allows keeping the payload
+ * and signature as as small as possible, which is important especially for the
+ * NFC.
+ * 
+ * @author Jeton Memeti
+ * 
+ */
 public class PaymentResponse extends SignedSerializableObject {
 	
 	private ServerResponseStatus status;
@@ -25,6 +33,35 @@ public class PaymentResponse extends SignedSerializableObject {
 	protected PaymentResponse() {
 	}
 	
+	/**
+	 * This constructor generates a new object.
+	 * 
+	 * @param pkiAlgorithm
+	 *            the server's {@link PKIAlgorithm} to be used for
+	 *            {@link SignedSerializableObject} super class
+	 * @param keyNumber
+	 *            the server's key number to be used for the
+	 *            {@link SignedSerializableObject} super class
+	 * @param status
+	 *            the {@link ServerResponseStatus} indicating if the transaction
+	 *            was granted or not
+	 * @param reason
+	 *            the reason if the transaction was not granted
+	 * @param usernamePayer
+	 *            he payer's username
+	 * @param usernamePayee
+	 *            the payee's username
+	 * @param currency
+	 *            the {@link Currency} of the payment same as in the
+	 *            {@link PaymentRequest}
+	 * @param amount
+	 *            the amount same as in the {@link PaymentRequest}
+	 * @param timestamp
+	 *            the payee's timestamp
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type
+	 */
 	public PaymentResponse(PKIAlgorithm pkiAlgorithm, int keyNumber, ServerResponseStatus status, String reason, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
 		this(1, pkiAlgorithm, keyNumber, status, reason, usernamePayer, usernamePayee, currency, amount, timestamp);
 	}

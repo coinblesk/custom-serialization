@@ -4,7 +4,18 @@ import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
 
-//TODO: javadoc
+/**
+ * This class represents a payment request, which is transferred from a client
+ * to the server over TCP/IP.
+ * 
+ * It contains one signed {@link PaymentRequest} if the payer initializes the
+ * payment. If the payee initializes the payment, then this contains two
+ * {@link PaymentRequest}, signed by each party respectively. The latter assures
+ * that the payer does not pay less than the payee requested.
+ * 
+ * @author Jeton Memeti
+ * 
+ */
 public class ServerPaymentRequest extends SerializableObject {
 	private static final int NOF_BYTES_FOR_PAYLOAD_LENGTH = 2; // 2 bytes for the payload length, up to 65536 bytes
 	
@@ -24,6 +35,16 @@ public class ServerPaymentRequest extends SerializableObject {
 		this.paymentRequestPayer = paymentRequestPayer;
 	}
 	
+	/**
+	 * This constructor instantiates a new object with one
+	 * {@link PaymentRequest}, signed by the payer.
+	 * 
+	 * @param paymentRequestPayer
+	 *            the payer's {@link PaymentRequest}
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type or if the {@link PaymentRequest} is not signed
+	 */
 	public ServerPaymentRequest(PaymentRequest paymentRequestPayer) throws IllegalArgumentException {
 		this(1, paymentRequestPayer);
 	}
@@ -38,6 +59,19 @@ public class ServerPaymentRequest extends SerializableObject {
 		this.paymentRequestPayee = paymentRequestPayee;
 	}
 	
+	/**
+	 * This constructor instantiates a new object with two
+	 * {@link PaymentRequest}s, signed by the payer and by the payee
+	 * respectively.
+	 * 
+	 * @param paymentRequestPayer
+	 *            the payer's {@link PaymentRequest}
+	 * @param paymentRequestPayee
+	 *            the payee's {@link PaymentRequest}
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type or if any {@link PaymentRequest} is not signed
+	 */
 	public ServerPaymentRequest(PaymentRequest paymentRequestPayer, PaymentRequest paymentRequestPayee) throws IllegalArgumentException {
 		this(1, paymentRequestPayer, paymentRequestPayee);
 	}
@@ -74,14 +108,27 @@ public class ServerPaymentRequest extends SerializableObject {
 			throw new IllegalArgumentException("The "+role+"'s signature is too long. A signature algorithm with output longer than 255 bytes is not supported.");
 	}
 	
+	/**
+	 * Returns the number of signatures or {@link PaymentRequest} this object
+	 * contains.
+	 */
 	public byte getNofSignatures() {
 		return nofSignatures;
 	}
 	
+	/**
+	 * Returns the payer's {@link PaymentRequest}. This object is always set.
+	 */
 	public PaymentRequest getPaymentRequestPayer() {
 		return paymentRequestPayer;
 	}
-	
+
+	/**
+	 * Returns the payee's {@link PaymentRequest} if this object contains 2
+	 * signatures. Returns null if the object was instantiated with only the
+	 * payer's {@link PaymentRequest} (if this object contains only 1
+	 * signature).
+	 */
 	public PaymentRequest getPaymentRequestPayee() {
 		return paymentRequestPayee;
 	}

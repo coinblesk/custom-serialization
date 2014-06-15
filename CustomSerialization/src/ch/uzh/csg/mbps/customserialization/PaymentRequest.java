@@ -7,7 +7,14 @@ import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownCurrencyException;
 import ch.uzh.csg.mbps.customserialization.exceptions.UnknownPKIAlgorithmException;
 
-//TODO: javadoc
+/**
+ * This class represents a payment request, which is transferred via NFC between
+ * two clients. The byte array serialization allows keeping the payload and
+ * signature as as small as possible, which is important especially for the NFC.
+ * 
+ * @author Jeton Memeti
+ * 
+ */
 public class PaymentRequest extends SignedSerializableObject {
 	
 	private String usernamePayer;
@@ -23,6 +30,30 @@ public class PaymentRequest extends SignedSerializableObject {
 	protected PaymentRequest() {
 	}
 
+	/**
+	 * This constructor instantiates a new object.
+	 * 
+	 * @param pkiAlgorithm
+	 *            the {@link PKIAlgorithm} to be used for
+	 *            {@link SignedSerializableObject} super class
+	 * @param keyNumber
+	 *            the key number to be used for the
+	 *            {@link SignedSerializableObject} super class
+	 * @param usernamePayer
+	 *            the payer's username
+	 * @param usernamePayee
+	 *            the payee's username
+	 * @param currency
+	 *            the {@link Currency} of the payment
+	 * @param amount
+	 *            the requested amount
+	 * @param timestamp
+	 *            the payee's timestamp in order to detect repeated but
+	 *            unintended payments
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type
+	 */
 	public PaymentRequest(PKIAlgorithm pkiAlgorithm, int keyNumber, String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
 		this(1, pkiAlgorithm, keyNumber, usernamePayer, usernamePayee, currency, amount, timestamp);
 	}
@@ -43,6 +74,39 @@ public class PaymentRequest extends SignedSerializableObject {
 		setPayload(false);
 	}
 	
+	/**
+	 * This constructor instantiates a new object. In addition to the other
+	 * constructor, it allows adding an input currency as well as an input
+	 * amount (e.g., when the amount is entered in another {@link Currency} than
+	 * BTC).
+	 * 
+	 * @param pkiAlgorithm
+	 *            the {@link PKIAlgorithm} to be used for
+	 *            {@link SignedSerializableObject} super class
+	 * @param keyNumber
+	 *            the key number to be used for the
+	 *            {@link SignedSerializableObject} super class
+	 * @param usernamePayer
+	 *            the payer's username
+	 * @param usernamePayee
+	 *            the payee's username
+	 * @param currency
+	 *            the {@link Currency} of the payment
+	 * @param amount
+	 *            the requested amount
+	 * @param inputCurrency
+	 *            if the user entered the amount in a {@link Currency} other
+	 *            than BTC
+	 * @param inputAmount
+	 *            if the user entered the amount in a {@link Currency} other
+	 *            than BTC
+	 * @param timestamp
+	 *            the payee's timestamp in order to detect repeated but
+	 *            unintended payments
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type
+	 */
 	public PaymentRequest(PKIAlgorithm pkiAlgorithm, int keyNumber, String usernamePayer, String usernamePayee, Currency currency, long amount, Currency inputCurrency, long inputAmount, long timestamp) throws IllegalArgumentException {
 		this(1, pkiAlgorithm, keyNumber, usernamePayer, usernamePayee, currency, amount, inputCurrency, inputAmount, timestamp);
 	}

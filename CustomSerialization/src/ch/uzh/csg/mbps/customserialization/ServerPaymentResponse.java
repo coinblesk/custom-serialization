@@ -4,7 +4,22 @@ import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 import ch.uzh.csg.mbps.customserialization.exceptions.SerializationException;
 
-//TODO: javadoc
+/**
+ * This class represents a payment response, which is transferred from the
+ * server to the client over TCP/IP.
+ * 
+ * It contains one signed {@link PaymentResponse} if both clients belong to the
+ * same server. Therefore, they can verify the server's signature.
+ * 
+ * If the clients involved in this {@link PaymentRequest} (i.e., the payer and
+ * the payee) belong to different servers, then this object must contain two
+ * {@link PaymentResponse}s. The payer's {@link PaymentResponse} is then signed
+ * with its server's public key. The payee's {@link PaymentResponse} is then
+ * signed with its server's public key.
+ * 
+ * @author Jeton Memeti
+ * 
+ */
 public class ServerPaymentResponse extends SerializableObject {
 	private static final int NOF_BYTES_FOR_PAYMENT_RESPONSE_LENGTH = 2; // 2 bytes for the payload length, up to 65536 bytes
 	
@@ -17,10 +32,39 @@ public class ServerPaymentResponse extends SerializableObject {
 	protected ServerPaymentResponse() {
 	}
 
+	/**
+	 * This constructor instantiates a new object for the case where the payer
+	 * and the payee belong to the same server and only one signed
+	 * {@link PaymentResponse} is needed.
+	 * 
+	 * @param paymentResponsePayer
+	 *            the payer's {@link PaymentResponse} signed with the server's
+	 *            private key
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type or if the {@link PaymentResponse} is not
+	 *             signed
+	 */
 	public ServerPaymentResponse(PaymentResponse paymentResponsePayer) throws IllegalArgumentException {
 		this(1, paymentResponsePayer);
 	}
 	
+	/**
+	 * This constructor instantiates a new object for the case where the payer
+	 * and the payee do not belong to the same server. Therefore, two signed
+	 * {@link PaymentResponse}s are needed.
+	 * 
+	 * @param paymentResponsePayer
+	 *            the payer's {@link PaymentResponse} signed with his server's
+	 *            private key
+	 * @param paymentResponsePayee
+	 *            the payee's {@link PaymentResponse} signed with his server's
+	 *            private key
+	 * @throws IllegalArgumentException
+	 *             if any argument is null or does not fit into the foreseen
+	 *             primitive type or if any {@link PaymentResponse} is not
+	 *             signed
+	 */
 	public ServerPaymentResponse(PaymentResponse paymentResponsePayer, PaymentResponse paymentResponsePayee) throws IllegalArgumentException {
 		this(1, paymentResponsePayer, paymentResponsePayee);
 	}
@@ -60,10 +104,29 @@ public class ServerPaymentResponse extends SerializableObject {
 			throw new IllegalArgumentException("The "+role+"'s payment response signature is too long. A signature algorithm with output longer than 255 bytes is not supported.");
 	}
 	
+	/**
+	 * Returns the number {@link PaymentResponse}s contained in this object
+	 * (i.e., how many servers have signed the {@link PaymentResponse}).
+	 */
+	public byte getNofPaymentResponses() {
+		return nofPaymentResponses;
+	}
+	
+	/**
+	 * Returns the payer's {@link PaymentResponse} signed with his server's
+	 * public key. This object is always set. If nogPaymentResponses is 1, this
+	 * {@link PaymentResponse} should also be forwarded to the payee.
+	 */
 	public PaymentResponse getPaymentResponsePayer() {
 		return paymentResponsePayer;
 	}
 
+	/**
+	 * Returns the payee's {@link PaymentResponse} signed with his server's
+	 * public key, only if it is not the same server as the payer's server. If
+	 * payer and payee belong to the same server, this returns null. In this
+	 * case, nofPaymentResponses is equals to 1.
+	 */
 	public PaymentResponse getPaymentResponsePayee() {
 		return paymentResponsePayee;
 	}

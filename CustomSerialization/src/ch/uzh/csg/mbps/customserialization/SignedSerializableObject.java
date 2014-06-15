@@ -10,16 +10,20 @@ import java.security.SignatureException;
 import ch.uzh.csg.mbps.customserialization.exceptions.IllegalArgumentException;
 import ch.uzh.csg.mbps.customserialization.exceptions.NotSignedException;
 
-//TODO: javadoc
+/**
+ * This is an abstract class for objects which can be serialized into a byte
+ * array and which have a signature attached. Since it extensd
+ * {@link SerializableObject} it can be encoded into a byte array or decoded
+ * from such one.
+ * 
+ * @author Jeton Memeti
+ * 
+ */
 public abstract class SignedSerializableObject extends SerializableObject {
 	
 	private PKIAlgorithm pkiAlgorithm;
 	private int keyNumber;
 	
-	/*
-	 * payload and signature are not serialized but only hold references in
-	 * order to save cpu time
-	 */
 	protected byte[] payload;
 	protected byte[] signature;
 	
@@ -27,6 +31,23 @@ public abstract class SignedSerializableObject extends SerializableObject {
 	protected SignedSerializableObject() {
 	}
 
+	/**
+	 * This constructor is only used by sub classes since this class is
+	 * abstract.
+	 * 
+	 * @param version
+	 *            the version of this object (version of
+	 *            {@link SerializableObject})
+	 * @param pkiAlgorithm
+	 *            the {@link PKIAlgorithm} used for signing the payload
+	 *            /verifying the signature
+	 * @param keyNumber
+	 *            the key number of the user who signed this object in order to
+	 *            retrieve the correct public key to verify the signature
+	 * @throws IllegalArgumentException
+	 *             if any parameter is null or does not fit into the foreseen
+	 *             primitive type
+	 */
 	public SignedSerializableObject(int version, PKIAlgorithm pkiAlgorithm, int keyNumber) throws IllegalArgumentException {
 		super(version);
 		
@@ -40,22 +61,49 @@ public abstract class SignedSerializableObject extends SerializableObject {
 		this.keyNumber = keyNumber;
 	}
 	
+	/**
+	 * Returns the {@link PKIAlgorithm} which has been used to sign the payload.
+	 */
 	public PKIAlgorithm getPKIAlgorithm() {
 		return pkiAlgorithm;
 	}
 	
+	/**
+	 * Returns the key number of the user who signed this object in order to
+	 * retrieve the correct public key to verify the signature.
+	 */
 	public int getKeyNumber() {
 		return keyNumber;
 	}
 	
+	/**
+	 * Returns the payload of this object (excluding the signature).
+	 */
 	public byte[] getPayload() {
 		return payload;
 	}
 	
+	/**
+	 * Returns only the signature of this object.
+	 */
 	public byte[] getSignature() {
 		return signature;
 	}
 	
+	/**
+	 * Signs this object with the given private key.
+	 * 
+	 * @param privateKey
+	 *            the private key used to sign the object
+	 * @throws NoSuchAlgorithmException
+	 *             if the {@link PKIAlgorithm} provided in the constructor is
+	 *             not known
+	 * @throws InvalidKeyException
+	 *             if the private key does not belong to the given
+	 *             {@link PKIAlgorithm}
+	 * @throws SignatureException
+	 *             if an error occured during the signing phase
+	 */
 	public void sign(PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		Signature sig = Signature.getInstance(pkiAlgorithm.getSignatureAlgorithm());
 		sig.initSign(privateKey);
@@ -63,6 +111,24 @@ public abstract class SignedSerializableObject extends SerializableObject {
 		signature = sig.sign();
 	}
 	
+	/**
+	 * Verifies the signature contained in this object.
+	 * 
+	 * @param publicKey
+	 *            the public key to be used for the verification
+	 * @return true if the signature is valid for the given payload, false
+	 *         otherwise
+	 * @throws NotSignedException
+	 *             if this object (the payload) has not been signed
+	 * @throws NoSuchAlgorithmException
+	 *             if the {@link PKIAlgorithm} provided in the constructor is
+	 *             not known
+	 * @throws InvalidKeyException
+	 *             if the public key does not belong to the given
+	 *             {@link PKIAlgorithm}
+	 * @throws SignatureException
+	 *             if an error occured during the verification phase
+	 */
 	public boolean verify(PublicKey publicKey) throws NotSignedException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		if (signature == null)
 			throw new NotSignedException();
