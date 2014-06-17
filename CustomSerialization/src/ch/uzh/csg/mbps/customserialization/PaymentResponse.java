@@ -121,20 +121,7 @@ public class PaymentResponse extends SignedSerializableObject {
 		byte[] timestampBytes = PrimitiveTypeSerializer.getLongAsBytes(timestamp);
 		
 		int length;
-		if (status == ServerResponseStatus.SUCCESS) {
-			/*
-			 * version
-			 * + signatureAlgorithm.getCode()
-			 * + keyNumber
-			 * + status
-			 * + usernamePayer.length
-			 * + usernamePayer
-			 * + currency.getCode()
-			 * + amount
-			 * + timestamp
-			 */
-			length = 1+1+1+1+1+usernamePayerBytes.length+1+usernamePayeeBytes.length+1+8+8;
-		} else {
+		if (status == ServerResponseStatus.FAILURE) {
 			/*
 			 * version
 			 * + signatureAlgorithm.getCode()
@@ -152,6 +139,21 @@ public class PaymentResponse extends SignedSerializableObject {
 			 */
 			reasonBytes = reason.getBytes(Charset.forName("UTF-8"));
 			length = 1+1+1+1+1+reasonBytes.length+1+usernamePayerBytes.length+1+usernamePayeeBytes.length+1+8+8;
+		} else {
+			/*
+			 * version
+			 * + signatureAlgorithm.getCode()
+			 * + keyNumber
+			 * + status
+			 * + usernamePayer.length
+			 * + usernamePayer
+			 * + usernamePayee.length
+			 * + usernamePayee
+			 * + currency.getCode()
+			 * + amount
+			 * + timestamp
+			 */
+			length = 1+1+1+1+1+usernamePayerBytes.length+1+usernamePayeeBytes.length+1+8+8;
 		}
 		byte[] payload = new byte[length];
 		
