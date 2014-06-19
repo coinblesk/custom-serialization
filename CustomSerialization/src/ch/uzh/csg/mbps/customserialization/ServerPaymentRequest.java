@@ -88,7 +88,7 @@ public class ServerPaymentRequest extends SerializableObject {
 		checkPaymentRequest(paymentRequestPayee, "payee");
 		
 		if (!paymentRequestPayee.requestsIdentic(paymentRequestPayer))
-			throw new IllegalArgumentException("The tow payment requests must be identic.");
+			throw new IllegalArgumentException("The two payment requests must be identic.");
 	}
 	
 	private void checkPaymentRequest(PaymentRequest paymentRequest, String role) throws IllegalArgumentException {
