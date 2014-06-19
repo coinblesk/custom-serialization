@@ -75,7 +75,7 @@ public enum PKIAlgorithm {
 		
 		PKIAlgorithm pkiAlgorithm = codeAlgorithmMap.get(b);
 		if (pkiAlgorithm == null)
-			throw new UnknownPKIAlgorithmException();
+			throw new UnknownPKIAlgorithmException("could not find pki code " + b);
 		else
 			return pkiAlgorithm;
 	}
