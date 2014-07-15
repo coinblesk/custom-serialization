@@ -117,5 +117,26 @@ public class ServerPaymentRequestTest {
 		assertTrue(decodedSpr.getPaymentRequestPayer().verify(keyPairPayer.getPublic()));
 		assertTrue(decodedSpr.getPaymentRequestPayee().verify(keyPairPayee.getPublic()));
 	}
+	
+	@Test
+	public void testEncodeDecode_withInputCurrency() throws IllegalArgumentException, InvalidKeyException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidAlgorithmParameterException, SerializationException {
+		long timestamp = System.currentTimeMillis();
+		
+		KeyPair keyPairPayer = TestUtils.generateKeyPair();
+		KeyPair keyPairPayee = TestUtils.generateKeyPair();
+		
+		PaymentRequest prPayer = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, timestamp);
+		prPayer.sign(keyPairPayer.getPrivate());
+		PaymentRequest prPayee = new PaymentRequest(PKIAlgorithm.DEFAULT, 1, "buyer", "seller", Currency.BTC, 12, Currency.CHF, 100, timestamp);
+		prPayee.sign(keyPairPayee.getPrivate());
+		ServerPaymentRequest spr = new ServerPaymentRequest(prPayer, prPayee);
+		
+		byte[] encoded = spr.encode();
+		ServerPaymentRequest decodedSpr = DecoderFactory.decode(ServerPaymentRequest.class, encoded);
+		
+		assertTrue(spr.equals(decodedSpr));
+		assertTrue(decodedSpr.getPaymentRequestPayer().verify(keyPairPayer.getPublic()));
+		assertTrue(decodedSpr.getPaymentRequestPayee().verify(keyPairPayee.getPublic()));
+	}
 
 }

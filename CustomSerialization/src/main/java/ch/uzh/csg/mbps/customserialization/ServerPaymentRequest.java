@@ -95,17 +95,17 @@ public class ServerPaymentRequest extends SerializableObject {
 		if (paymentRequest == null)
 			throw new IllegalArgumentException("The "+role+"'s Payment Request can't be null.");
 		
-		int maxPayloadLength = (int) Math.pow(2, NOF_BYTES_FOR_PAYLOAD_LENGTH*Byte.SIZE) - 1;
 		byte[] payload = paymentRequest.getPayload();
-		if (payload == null || payload.length == 0 || payload.length > maxPayloadLength)
-			throw new IllegalArgumentException("The "+role+"'s payload can't be null, empty or longer than "+maxPayloadLength+" bytes.");
+		if (payload == null || payload.length == 0)
+			throw new IllegalArgumentException("The "+role+"'s payload can't be null or empty.");
 		
 		byte[] signature = paymentRequest.getSignature();
 		if (signature == null || signature.length == 0)
 			throw new IllegalArgumentException("The "+role+"'s Payment Request is not signed.");
 		
-		if (signature.length > 255)
-			throw new IllegalArgumentException("The "+role+"'s signature is too long. A signature algorithm with output longer than 255 bytes is not supported.");
+		int maxPayloadLength = (int) Math.pow(2, NOF_BYTES_FOR_PAYLOAD_LENGTH*Byte.SIZE) - 1;
+		if (payload.length + signature.length > maxPayloadLength)
+			throw new IllegalArgumentException("The "+role+"'s raw payment request is too long (longer than "+maxPayloadLength+" bytes).");
 	}
 	
 	/**
@@ -140,26 +140,20 @@ public class ServerPaymentRequest extends SerializableObject {
 			/*
 			 * version
 			 * + nofSignatures
-			 * + paymentRequestPayer.getPayload().length
-			 * + paymentRequestPayer.getPayload()
-			 * + paymentRequestPayer.getSignature().length
-			 * + paymentRequestPayer.getSignature()
+			 * + paymentRequestPayer.length
+			 * + paymentRequestPayer
 			 */
-			outputLength = 1+1+NOF_BYTES_FOR_PAYLOAD_LENGTH+paymentRequestPayer.getPayload().length+1+paymentRequestPayer.getSignature().length;
+			outputLength = 1+1+NOF_BYTES_FOR_PAYLOAD_LENGTH+paymentRequestPayer.getPayload().length+paymentRequestPayer.getSignature().length;
 		} else {
 			/*
 			 * version
 			 * + nofSignatures
-			 * + paymentRequestPayer.getPayload().length
-			 * + paymentRequestPayer.getPayload()
-			 * + paymentRequestPayer.getSignature().length
-			 * + paymentRequestPayer.getSignature()
-			 * + versionPayee
-			 * + signatureAlgorithmPayee
-			 * + keyNumberPayee
-			 * + paymentRequestPayee.getSignature()
+			 * + paymentRequestPayer.length
+			 * + paymentRequestPayer
+			 * + paymentRequestPayee.length
+			 * + paymentRequestPayee
 			 */
-			outputLength = 1+1+NOF_BYTES_FOR_PAYLOAD_LENGTH+paymentRequestPayer.getPayload().length+1+paymentRequestPayer.getSignature().length+1+1+1+paymentRequestPayee.getSignature().length;
+			outputLength = 1+1+NOF_BYTES_FOR_PAYLOAD_LENGTH+paymentRequestPayer.getPayload().length+paymentRequestPayer.getSignature().length+NOF_BYTES_FOR_PAYLOAD_LENGTH+paymentRequestPayee.getPayload().length+paymentRequestPayee.getSignature().length;
 		}
 		
 		int index = 0;
@@ -168,22 +162,24 @@ public class ServerPaymentRequest extends SerializableObject {
 		result[index++] = (byte) getVersion();
 		result[index++] = nofSignatures;
 		
-		byte[] paloadLengthBytes = PrimitiveTypeSerializer.getShortAsBytes((short) paymentRequestPayer.getPayload().length);
-		for (byte b : paloadLengthBytes) {
+		byte[] paymentRequestPayerBytes = paymentRequestPayer.encode();
+		byte[] paymentRequestPayerBytesLength = PrimitiveTypeSerializer.getShortAsBytes((short) paymentRequestPayerBytes.length);
+		
+		for (byte b : paymentRequestPayerBytesLength) {
 			result[index++] = b;
 		}
-		for (byte b : paymentRequestPayer.getPayload()) {
+		for (byte b : paymentRequestPayerBytes) {
 			result[index++] = b;
 		}
-		result[index++] = (byte) paymentRequestPayer.getSignature().length;
-		for (byte b : paymentRequestPayer.getSignature()) {
-			result[index++] = b;
-		}
+		
 		if (nofSignatures > 1) {
-			result[index++] = (byte) paymentRequestPayee.getVersion();
-			result[index++] = paymentRequestPayee.getPKIAlgorithm().getCode();
-			result[index++] = (byte) paymentRequestPayee.getKeyNumber();
-			for (byte b : paymentRequestPayee.getSignature()) {
+			byte[] paymentRequestPayeeBytes = paymentRequestPayee.encode();
+			byte[] paymentRequestPayeeBytesLength = PrimitiveTypeSerializer.getShortAsBytes((short) paymentRequestPayeeBytes.length);
+			
+			for (byte b : paymentRequestPayeeBytesLength) {
+				result[index++] = b;
+			}
+			for (byte b : paymentRequestPayeeBytes) {
 				result[index++] = b;
 			}
 		}
@@ -201,28 +197,15 @@ public class ServerPaymentRequest extends SerializableObject {
 			int version = (bytes[index++] & 0xFF);
 			byte nofSignatures = bytes[index++];
 			
-			byte[] indicatedPayloadLength = new byte[NOF_BYTES_FOR_PAYLOAD_LENGTH];
+			byte[] indicatedLengthPayer = new byte[NOF_BYTES_FOR_PAYLOAD_LENGTH];
 			for (int i=0; i<NOF_BYTES_FOR_PAYLOAD_LENGTH; i++) {
-				indicatedPayloadLength[i] = bytes[index++];
-			}
-			int paymentRequestPayerPayloadLength = (PrimitiveTypeSerializer.getBytesAsShort(indicatedPayloadLength) & 0xFF);
-			byte[] paymentRequestPayerPayload = new byte[paymentRequestPayerPayloadLength];
-			for (int i=0; i<paymentRequestPayerPayloadLength; i++) {
-				paymentRequestPayerPayload[i] = bytes[index++];
-			}
-			int paymentRequestPayerSignatureLength = bytes[index++] & 0xFF;
-			byte[] paymentRequestPayerSignature = new byte[paymentRequestPayerSignatureLength];
-			for (int i=0; i<paymentRequestPayerSignatureLength; i++) {
-				paymentRequestPayerSignature[i] = bytes[index++];
+				indicatedLengthPayer[i] = bytes[index++];
 			}
 			
-			byte[] paymentRequestPayerBytes = new byte[paymentRequestPayerPayloadLength+paymentRequestPayerSignatureLength];
-			int newIndex = 0;
-			for (byte b : paymentRequestPayerPayload) {
-				paymentRequestPayerBytes[newIndex++] = b;
-			}
-			for (byte b : paymentRequestPayerSignature) {
-				paymentRequestPayerBytes[newIndex++] = b;
+			int paymentRequestPayerLength = (PrimitiveTypeSerializer.getBytesAsShort(indicatedLengthPayer) & 0xFF);
+			byte[] paymentRequestPayerBytes = new byte[paymentRequestPayerLength];
+			for (int i=0; i<paymentRequestPayerLength; i++) {
+				paymentRequestPayerBytes[i] = bytes[index++];
 			}
 			
 			PaymentRequest paymentRequestPayer = DecoderFactory.decode(PaymentRequest.class, paymentRequestPayerBytes);
@@ -230,29 +213,18 @@ public class ServerPaymentRequest extends SerializableObject {
 			if (nofSignatures == 1) {
 				return new ServerPaymentRequest(version, paymentRequestPayer);
 			} else if (nofSignatures == 2) {
-				byte versionPayee = bytes[index++];
-				byte signatureAlgorithmCodePayee = bytes[index++];
-				byte keyNumberPayee = bytes[index++];
-				
-				byte[] paymentRequestPayeePayload = paymentRequestPayerPayload;
-				paymentRequestPayeePayload[0] = versionPayee;
-				paymentRequestPayeePayload[1] = signatureAlgorithmCodePayee;
-				paymentRequestPayeePayload[2] = keyNumberPayee;
-				
-				byte[] paymentRequestPayeeSignature = new byte[bytes.length - index];
-				for (int i=0; i<paymentRequestPayeeSignature.length; i++) {
-					paymentRequestPayeeSignature[i] = bytes[index++];
+				byte[] indicatedLengthPayee = new byte[NOF_BYTES_FOR_PAYLOAD_LENGTH];
+				for (int i=0; i<NOF_BYTES_FOR_PAYLOAD_LENGTH; i++) {
+					indicatedLengthPayee[i] = bytes[index++];
 				}
 				
-				byte[] paymentRequestPayeeBytes = new byte[paymentRequestPayeePayload.length + paymentRequestPayeeSignature.length];
-				newIndex = 0;
-				for (byte b : paymentRequestPayeePayload) {
-					paymentRequestPayeeBytes[newIndex++] = b;
-				}
-				for (byte b : paymentRequestPayeeSignature) {
-					paymentRequestPayeeBytes[newIndex++] = b;
+				int paymentRequestPayeeLength = (PrimitiveTypeSerializer.getBytesAsShort(indicatedLengthPayee) & 0xFF);
+				byte[] paymentRequestPayeeBytes = new byte[paymentRequestPayeeLength];
+				for (int i=0; i<paymentRequestPayeeLength; i++) {
+					paymentRequestPayeeBytes[i] = bytes[index++];
 				}
 				PaymentRequest paymentRequestPayee = DecoderFactory.decode(PaymentRequest.class, paymentRequestPayeeBytes);
+				
 				return new ServerPaymentRequest(version, paymentRequestPayer, paymentRequestPayee);
 			} else {
 				throw new IllegalArgumentException("The given byte array is corrupt.");
