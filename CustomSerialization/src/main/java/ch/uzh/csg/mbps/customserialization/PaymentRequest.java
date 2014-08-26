@@ -133,8 +133,8 @@ public class PaymentRequest extends SignedSerializableObject {
 		if (inputCurrency == null)
 			throw new IllegalArgumentException("The input currency cannot be null.");
 		
-		if (inputAmount <= 0)
-			throw new IllegalArgumentException("The input amount must be greatern than 0.");
+		if (inputAmount < 0)
+			throw new IllegalArgumentException("The input amount must be greater than 0.");
 	}
 
 	private void checkParameters(String usernamePayer, String usernamePayee, Currency currency, long amount, long timestamp) throws IllegalArgumentException {
