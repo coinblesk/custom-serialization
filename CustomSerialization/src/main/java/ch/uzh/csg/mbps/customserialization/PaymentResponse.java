@@ -106,7 +106,7 @@ public class PaymentResponse extends SignedSerializableObject {
 		if (currency == null)
 			throw new IllegalArgumentException("The currency cannot be null.");
 		
-		if (amount < 0)
+		if (amount <= 0)
 			throw new IllegalArgumentException("The amount must be greater than 0.");
 		
 		if (timestamp <= 0)
