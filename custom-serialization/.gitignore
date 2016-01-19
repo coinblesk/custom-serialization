@@ -1,0 +1,4 @@
+/target/
+/.nb-gradle/
+/build/
+/.gradle/
