@@ -15,3 +15,7 @@ proguard/
 .project
 .settings
 target/
+/CustomSerialization/.nb-gradle/
+/CustomSerialization/build/
+/custom-serialization/.nb-gradle/
+/custom-serialization/build/
